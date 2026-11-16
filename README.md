@@ -102,8 +102,8 @@ as needs you.
 - **Several agents in one workspace.** The key shows one at a time: whoever stopped working most
   recently (the newest while all are working), or the one you picked. A row of dots along the
   bottom has one dot per agent, up to eight, in its state's colour, with the shown one outlined.
-- **Tap** goes to the agent on the key. With several agents, a tap while Orca already shows that
-  workspace steps to the next one.
+- **Tap** goes to the agent on the key and, on macOS, brings Orca in front of other apps. With
+  several agents, a tap while Orca already shows that workspace steps to the next one.
 - **Hold** (a little over half a second) starts a new agent in that workspace and brings its tab
   to the front in Orca. The key shows it at once and confirms with a check mark.
 - **A coloured frame** around a key marks the agent currently selected on the deck, the one the
@@ -146,6 +146,8 @@ talks only to the bridge; its settings pages load Elgato's `sdpi-components` scr
 
 - Hold always starts the agent chosen in the key's settings: Orca does not let a plugin open its
   own "new agent" dialog, where you would pick one.
+- Only on macOS does a press bring Orca's window in front of other apps. Orca does not let a
+  plugin raise its window, so the Stream Deck plugin does it itself, and only knows how there.
 - Anything running as your user on this machine can read the pairing file and connect, which is
   the same reach the `orca` CLI already has.
 - `agent.status.changed` is marked experimental by Orca; its payload may still change.

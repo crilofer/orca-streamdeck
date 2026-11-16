@@ -10,7 +10,11 @@ export class DeckState {
   private selectedAt = 0
   private readonly listeners = new Set<() => void>()
 
-  constructor(readonly bridge: BridgeClient) {
+  /** `raiseOrca` brings Orca in front of other apps once it shows what a press asked for. */
+  constructor(
+    readonly bridge: BridgeClient,
+    readonly raiseOrca: () => void = () => {}
+  ) {
     bridge.subscribe(() => this.notify())
   }
 
@@ -35,6 +39,7 @@ export class DeckState {
   async open(workspaceId: string): Promise<void> {
     await this.bridge.request({ type: 'open', workspaceId })
     this.bridge.markFocused(workspaceId)
+    this.raiseOrca()
   }
 
   /** Brings the agent's terminal to the front; an agent Orca tied to no terminal gets its workspace shown. */
@@ -42,6 +47,7 @@ export class DeckState {
     if (agent.terminalId !== null) {
       await this.bridge.request({ type: 'focus', terminalId: agent.terminalId })
       if (agent.workspaceId !== null) this.bridge.markFocused(agent.workspaceId)
+      this.raiseOrca()
       return
     }
     if (agent.workspaceId === null) throw new Error('Orca has not tied this agent to a workspace')

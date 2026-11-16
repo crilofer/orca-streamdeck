@@ -76,7 +76,7 @@ test('greets a deck with the roster, pushes status changes and runs its actions 
   assert.equal(hello.type, 'hello')
   if (hello.type === 'hello') {
     assert.equal(hello.protocol, 5)
-    assert.deepEqual(hello.plugin, { id: 'streamdeck-bridge', version: '1.0.0' })
+    assert.deepEqual(hello.plugin, { id: 'streamdeck-bridge', version: '1.0.1' })
   }
   // No workspace is focused, yet Orca listed the agents of each one, keyed by terminal until an event names the pane.
   assert.deepEqual(worker.host.callsOf('agents.list'), [{ workspaceId: 'w1' }, { workspaceId: 'w2' }])

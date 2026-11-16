@@ -113,6 +113,7 @@ export class AgentKey extends SingletonAction<AgentKeySettings> {
         streamDeck.logger.warn(`focus after launch: ${error instanceof Error ? error.message : String(error)}`)
       })
     }
+    this.state.raiseOrca()
     await key.showOk()
   }
 

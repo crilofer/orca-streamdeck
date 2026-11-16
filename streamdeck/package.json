@@ -1,6 +1,6 @@
 {
   "name": "orca-streamdeck-plugin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "license": "MIT",
   "description": "Elgato Stream Deck plugin for Orca coding agents; talks to the Stream Deck Bridge Orca plugin.",
