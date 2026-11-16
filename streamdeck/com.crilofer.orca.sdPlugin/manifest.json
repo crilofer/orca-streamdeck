@@ -1,0 +1,89 @@
+{
+  "$schema": "https://schemas.elgato.com/streamdeck/plugins/manifest.json",
+  "Name": "Orca Deck",
+  "Version": "1.0.0.0",
+  "Author": "crilofer",
+  "Description": "See which Orca coding agent needs you, jump to it, or start a new one from your Stream Deck. Needs the Stream Deck Bridge plugin in Orca.",
+  "Category": "Orca Deck",
+  "CategoryIcon": "imgs/plugin/category",
+  "Icon": "imgs/plugin/icon",
+  "CodePath": "bin/plugin.js",
+  "UUID": "com.crilofer.orca",
+  "SDKVersion": 2,
+  "Nodejs": {
+    "Version": "20",
+    "Debug": "enabled"
+  },
+  "Software": {
+    "MinimumVersion": "6.6"
+  },
+  "OS": [
+    {
+      "Platform": "mac",
+      "MinimumVersion": "12"
+    },
+    {
+      "Platform": "windows",
+      "MinimumVersion": "10"
+    }
+  ],
+  "Actions": [
+    {
+      "Name": "Agent",
+      "UUID": "com.crilofer.orca.agent",
+      "Icon": "imgs/actions/agent",
+      "Tooltip": "One workspace per key. Shows its agents one at a time, whoever answered last. Tap: open it in Orca, tap again: next agent. Hold: start a new agent there.",
+      "PropertyInspectorPath": "ui/agent.html",
+      "Controllers": [
+        "Keypad"
+      ],
+      "UserTitleEnabled": false,
+      "States": [
+        {
+          "Image": "imgs/actions/agent",
+          "ShowTitle": false
+        }
+      ]
+    },
+    {
+      "Name": "Needs you",
+      "UUID": "com.crilofer.orca.attention",
+      "Icon": "imgs/actions/attention",
+      "Tooltip": "How many agents wait for you. Tap to open the most urgent one.",
+      "PropertyInspectorPath": "ui/bridge.html",
+      "Controllers": [
+        "Keypad"
+      ],
+      "UserTitleEnabled": false,
+      "States": [
+        {
+          "Image": "imgs/actions/attention",
+          "ShowTitle": false
+        }
+      ]
+    },
+    {
+      "Name": "Agents dial",
+      "UUID": "com.crilofer.orca.overview",
+      "Icon": "imgs/actions/overview",
+      "Tooltip": "Rotate to select an agent, most urgent first. Push or tap to open it in Orca.",
+      "PropertyInspectorPath": "ui/bridge.html",
+      "Controllers": [
+        "Encoder"
+      ],
+      "Encoder": {
+        "layout": "layouts/strip.json",
+        "TriggerDescription": {
+          "Rotate": "Select agent",
+          "Push": "Open in Orca",
+          "Touch": "Open in Orca"
+        }
+      },
+      "States": [
+        {
+          "Image": "imgs/actions/overview"
+        }
+      ]
+    }
+  ]
+}

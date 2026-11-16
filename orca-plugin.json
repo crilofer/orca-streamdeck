@@ -1,0 +1,67 @@
+{
+  "manifestVersion": 2,
+  "id": "streamdeck-bridge",
+  "name": "Stream Deck Bridge",
+  "version": "1.0.0",
+  "description": "Shows your agents on an Elgato Stream Deck: their status on keys, and taps that open a workspace, go to an agent or start one.",
+  "icon": "images/icon.png",
+  "cover": {
+    "path": "images/cover.jpg",
+    "alt": "A macro keypad whose keys show one project each with its agent's logo and state: needs you, working, done, waiting"
+  },
+  "screenshots": [
+    {
+      "path": "images/keys.png",
+      "alt": "Eight keys and a touch strip showing agents per project with their logo and state",
+      "caption": "One key per workspace: the agent's logo, its state, and a dot per agent"
+    }
+  ],
+  "engines": {
+    "orca": ">=1.4.261"
+  },
+  "execution": "trusted-worker",
+  "pluginApi": 1,
+  "main": "src/worker.ts",
+  "contributes": {
+    "events": [
+      {
+        "on": "agent.status.changed"
+      },
+      {
+        "on": "workspace.changed"
+      },
+      {
+        "on": "workspace.removed"
+      }
+    ],
+    "commands": [
+      {
+        "id": "streamdeck.status",
+        "title": "Stream Deck: bridge status"
+      }
+    ],
+    "statusBarItems": [
+      {
+        "id": "attention",
+        "icon": "bot",
+        "text": "0",
+        "tooltip": "Stream Deck bridge",
+        "command": "streamdeck.status"
+      }
+    ]
+  },
+  "capabilities": [
+    {
+      "kind": "agent:read"
+    },
+    {
+      "kind": "workspace:read"
+    },
+    {
+      "kind": "workspace:write"
+    },
+    {
+      "kind": "agent:launch"
+    }
+  ]
+}

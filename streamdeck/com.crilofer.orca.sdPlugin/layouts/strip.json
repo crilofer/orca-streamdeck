@@ -1,0 +1,4 @@
+{
+  "id": "orca-strip",
+  "items": [{ "key": "canvas", "type": "pixmap", "rect": [0, 0, 200, 100] }]
+}

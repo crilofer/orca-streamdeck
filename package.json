@@ -1,0 +1,20 @@
+{
+  "name": "orca-streamdeck",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "description": "Orca plugin that bridges agent status to an Elgato Stream Deck.",
+  "type": "module",
+  "scripts": {
+    "types": "orca plugin types .",
+    "validate": "orca plugin validate .",
+    "check": "orca plugin check .",
+    "test": "orca plugin test .",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "dev": "orca plugin dev watch ."
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.6.0"
+  }
+}

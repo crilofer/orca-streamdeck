@@ -1,0 +1,28 @@
+{
+  "name": "orca-streamdeck-plugin",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "description": "Elgato Stream Deck plugin for Orca coding agents; talks to the Stream Deck Bridge Orca plugin.",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "watch": "node build.mjs --watch",
+    "deploy": "node deploy.mjs",
+    "test": "node --test src/*.test.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "validate": "streamdeck validate com.crilofer.orca.sdPlugin",
+    "icons": "node scripts/render-icons.mjs",
+    "icons:agents": "node scripts/embed-agent-icons.mjs",
+    "pack": "streamdeck pack com.crilofer.orca.sdPlugin --output dist/"
+  },
+  "dependencies": {
+    "@elgato/streamdeck": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "esbuild": "^0.24.0",
+    "typescript": "^5.6.0",
+    "@resvg/resvg-js": "^2.6.2"
+  }
+}
