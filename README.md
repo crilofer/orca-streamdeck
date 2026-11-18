@@ -54,12 +54,15 @@ enter. The only setup is choosing which workspace each key shows.
 
 **1. In Orca** (1.4.261 or newer). Plugins are in alpha; turn them on in **Settings → Plugins** first.
 
+[Open in Orca](https://orca.dev/plugins/crilofer.streamdeck-bridge?catalog=community) takes you to
+the plugin's page in Orca's community catalog, where you press **Install**. Or, from a terminal:
+
 ```sh
 orca plugin install crilofer/orca-streamdeck
 ```
 
-The plugin runs its own code, so Orca asks you to approve it and prints the exact command to
-re-run with `--approve <fingerprint>`.
+The plugin runs its own code, so Orca asks you to approve it. In the terminal, it prints the exact
+command to re-run with `--approve <fingerprint>`.
 
 **2. In the Stream Deck app** (6.6 or newer). Download `com.crilofer.orca.streamDeckPlugin`
 from the [latest release](https://github.com/crilofer/orca-streamdeck/releases/latest), open
