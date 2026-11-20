@@ -1,6 +1,7 @@
 // What every key and dial shares: the roster from the bridge plus the agent the person selected.
 import type { RosterAgent, WorkspaceSummary } from '../../src/bridge-protocol.ts'
 import type { BridgeClient } from './bridge-client.ts'
+import { agentsInScope, botViews, type AttentionScope, type BotView } from './bot-view.ts'
 import { workspaceAgents, type ShownOverride } from './workspace-key-view.ts'
 
 export class DeckState {
@@ -24,6 +25,21 @@ export class DeckState {
 
   agents(): RosterAgent[] {
     return this.bridge.agents()
+  }
+
+  /** The agents the Needs you key counts: all of them, or leaving bots' chats in or out. */
+  agentsInScope(scope: AttentionScope): RosterAgent[] {
+    return agentsInScope(this.bridge.agents(), this.bridge.workspaces, scope)
+  }
+
+  /** Every agent but bots' chats, which have a key and a dial of their own. */
+  codingAgents(): RosterAgent[] {
+    return this.agentsInScope('agents')
+  }
+
+  /** Every bot on this computer, by name. */
+  bots(): BotView[] {
+    return botViews(this.bridge.workspaces, this.bridge.agents())
   }
 
   agentsIn(workspaceId: string): RosterAgent[] {
@@ -54,9 +70,9 @@ export class DeckState {
     await this.open(agent.workspaceId)
   }
 
-  /** The agent the dial picked while it is still around, else the one that most needs a person. */
+  /** The coding agent the dial picked while it is still around, else the one that most needs a person. */
   selected(): RosterAgent | null {
-    const agents = this.agents()
+    const agents = this.codingAgents()
     if (this.selectedPaneKey !== null) {
       const picked =
         agents.find((agent) => agent.paneKey === this.selectedPaneKey) ??

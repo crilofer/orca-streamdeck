@@ -2,6 +2,7 @@
 // Stream Deck renders SVG with Qt: rect, circle, path, text and inline images; no nested <svg>.
 import type { AgentState, RosterAgent } from '../../src/bridge-protocol.ts'
 import { agentLogo } from './agent-logos.ts'
+import { botMark } from './bot-mark.ts'
 import { svgDataUri, text } from './svg-markup.ts'
 
 export const STATE_COLOR: Record<AgentState, string> = {
@@ -65,20 +66,42 @@ export function newAgentKeyImage(focusedWorkspace: string | null, connected: boo
   ${text(36, 60, focusedWorkspace ? 'hold: new agent' : 'in key settings', 8, MUTED)}`)
 }
 
-export function attentionKeyImage(agents: RosterAgent[], connected: boolean): string {
+/** A bot's key: its picture and name, and what its most pressing chat is doing. */
+export function botKeyImage(input: { name: string; avatar: string | null; chats: RosterAgent[] }): string {
+  const { name, avatar, chats } = input
+  const lead = chats[0] ?? null
+  const color = lead ? STATE_COLOR[lead.state] : DIM
+  return key(`
+  <rect x="0" y="0" width="72" height="7" rx="3.5" fill="${color}"/>
+  ${botMark(name, avatar, 22, 10, 28)}
+  ${fittedText(36, 49, name)}
+  ${text(36, 59, lead ? STATE_LABEL[lead.state] : 'idle', 9, lead ? color : MUTED)}`)
+}
+
+/** A Bot key with no bot to show: none chosen yet, or the chosen one is not in Orca. */
+export function emptyBotKeyImage(first: string, second: string, connected: boolean): string {
+  if (!connected) return offlineKeyImage()
+  return key(`
+  ${dashedFrame()}
+  ${text(36, 34, first, 9, MUTED)}
+  ${text(36, 46, second, 8, MUTED)}`)
+}
+
+/** `noun` names one of what is counted: an agent, or only a bot's chat. */
+export function attentionKeyImage(agents: RosterAgent[], connected: boolean, noun = 'agent'): string {
   if (!connected) return offlineKeyImage()
   const blocked = agents.filter((a) => a.state === 'blocked').length
   const waiting = agents.filter((a) => a.state === 'waiting').length
   const working = agents.filter((a) => a.state === 'working').length
   const need = blocked + waiting
   const color = blocked > 0 ? STATE_COLOR.blocked : waiting > 0 ? STATE_COLOR.waiting : working > 0 ? STATE_COLOR.working : agents.length > 0 ? STATE_COLOR.done : DIM
-  const caption = need > 0 ? (need === 1 ? 'needs you' : 'need you') : working > 0 ? 'working' : agents.length > 0 ? 'all done' : 'no agents'
+  const caption = need > 0 ? (need === 1 ? 'needs you' : 'need you') : working > 0 ? 'working' : agents.length > 0 ? 'all done' : `no ${noun}s`
   const big = need > 0 ? String(need) : working > 0 ? String(working) : agents.length > 0 ? String(agents.length) : '0'
   return key(`
   <circle cx="36" cy="27" r="14" fill="${color}"/>
   ${text(36, 32, big, 16, BG, 800)}
   ${text(36, 58, caption, 11, FG)}
-  ${text(36, 68, `${agents.length} agents`, 8, MUTED)}`)
+  ${text(36, 68, `${agents.length} ${noun}${agents.length === 1 ? '' : 's'}`, 8, MUTED)}`)
 }
 
 export function offlineKeyImage(): string {

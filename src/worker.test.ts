@@ -12,8 +12,8 @@ import { readRendezvous } from './bridge-rendezvous'
 process.env.ORCA_STREAMDECK_BRIDGE_FILE = join(mkdtempSync(join(tmpdir(), 'orca-streamdeck-')), 'bridge.json')
 
 const workspaces = [
-  { id: 'w1', name: 'orca', project: null, path: '/repo', branch: 'main', kind: 'worktree' },
-  { id: 'w2', name: 'docs', project: null, path: '/docs', branch: 'main', kind: 'worktree' }
+  { id: 'w1', name: 'orca', project: null, path: '/repo', branch: 'main', kind: 'worktree', bot: false },
+  { id: 'w2', name: 'docs', project: null, path: '/docs', branch: 'main', kind: 'worktree', bot: false }
 ]
 const claude = { terminalId: 't1', title: 'Claude', agent: 'claude', state: 'blocked', stateStartedAt: 1000 }
 const codex = { terminalId: 't2', title: 'Codex', agent: 'codex', state: 'working', stateStartedAt: 800 }
@@ -75,8 +75,8 @@ test('greets a deck with the roster, pushes status changes and runs its actions 
   const hello = await deck.next()
   assert.equal(hello.type, 'hello')
   if (hello.type === 'hello') {
-    assert.equal(hello.protocol, 5)
-    assert.deepEqual(hello.plugin, { id: 'streamdeck-bridge', version: '1.0.2' })
+    assert.equal(hello.protocol, 6)
+    assert.deepEqual(hello.plugin, { id: 'streamdeck-bridge', version: '1.1.0' })
   }
   // No workspace is focused, yet Orca listed the agents of each one, keyed by terminal until an event names the pane.
   const listedClaude = { paneKey: 'terminal:t1', workspaceId: 'w1', terminalId: 't1', title: 'Claude', agent: 'claude', state: 'blocked', outcome: null, since: 1000 }

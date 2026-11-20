@@ -2,11 +2,12 @@
 // The Stream Deck plugin speaks the same types; keep this file copyable as-is.
 
 /**
+ * 6: a workspace says whether it is a bot's home (`bot`).
  * 5: `hello` no longer carries `features`: every Orca this runs on can focus a terminal.
  * 4: a client's first line is `auth` with the token from the rendezvous file; `send` is gone.
  * 3: `hello` carries `features` and `focus` requests exist. 2: `snapshot` carries `focusedWorkspaceId`.
  */
-export const BRIDGE_PROTOCOL = 5
+export const BRIDGE_PROTOCOL = 6
 
 export type AgentState = 'working' | 'blocked' | 'waiting' | 'done'
 
@@ -42,6 +43,8 @@ export type WorkspaceSummary = {
   path: string
   branch: string | null
   kind: 'worktree' | 'folder'
+  /** A bot's home on this computer; its chats are the agents of this workspace. */
+  bot: boolean
 }
 
 export type ServerMessage =

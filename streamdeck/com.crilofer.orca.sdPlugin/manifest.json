@@ -1,9 +1,9 @@
 {
   "$schema": "https://schemas.elgato.com/streamdeck/plugins/manifest.json",
   "Name": "Orca Deck",
-  "Version": "1.0.2.0",
+  "Version": "1.1.0.0",
   "Author": "crilofer",
-  "Description": "See which Orca coding agent needs you, jump to it, or start a new one from your Stream Deck. Needs the Stream Deck Bridge plugin in Orca.",
+  "Description": "See which Orca coding agent or bot needs you, jump to it, or start a new agent from your Stream Deck. Needs the Stream Deck Bridge plugin in Orca.",
   "Category": "Orca Deck",
   "CategoryIcon": "imgs/plugin/category",
   "Icon": "imgs/plugin/icon",
@@ -49,8 +49,8 @@
       "Name": "Needs you",
       "UUID": "com.crilofer.orca.attention",
       "Icon": "imgs/actions/attention",
-      "Tooltip": "How many agents wait for you. Tap to open the most urgent one.",
-      "PropertyInspectorPath": "ui/bridge.html",
+      "Tooltip": "How many agents and bots wait for you. Tap to open the most urgent one.",
+      "PropertyInspectorPath": "ui/attention.html",
       "Controllers": [
         "Keypad"
       ],
@@ -66,7 +66,7 @@
       "Name": "Agents dial",
       "UUID": "com.crilofer.orca.overview",
       "Icon": "imgs/actions/overview",
-      "Tooltip": "Rotate to select an agent, most urgent first. Push or tap to open it in Orca.",
+      "Tooltip": "Rotate to select a coding agent, most urgent first. Push or tap to open it in Orca.",
       "PropertyInspectorPath": "ui/bridge.html",
       "Controllers": [
         "Encoder"
@@ -83,7 +83,49 @@
         {
           "Image": "imgs/actions/overview"
         }
+      ],
+      "UserTitleEnabled": false
+    },
+    {
+      "Name": "Bot",
+      "UUID": "com.crilofer.orca.bot",
+      "Icon": "imgs/actions/bot",
+      "Tooltip": "One bot per key. Shows its picture and what its most pressing chat is doing. Tap: open the bot in Orca.",
+      "PropertyInspectorPath": "ui/bot.html",
+      "Controllers": [
+        "Keypad"
+      ],
+      "UserTitleEnabled": false,
+      "States": [
+        {
+          "Image": "imgs/actions/bot",
+          "ShowTitle": false
+        }
       ]
+    },
+    {
+      "Name": "Bots dial",
+      "UUID": "com.crilofer.orca.bots",
+      "Icon": "imgs/actions/bots",
+      "Tooltip": "Rotate through your bots and what each is doing. Push or tap to open the one shown in Orca.",
+      "PropertyInspectorPath": "ui/bridge.html",
+      "Controllers": [
+        "Encoder"
+      ],
+      "Encoder": {
+        "layout": "layouts/strip.json",
+        "TriggerDescription": {
+          "Rotate": "Select bot",
+          "Push": "Open in Orca",
+          "Touch": "Open in Orca"
+        }
+      },
+      "States": [
+        {
+          "Image": "imgs/actions/bots"
+        }
+      ],
+      "UserTitleEnabled": false
     }
   ]
 }

@@ -1,4 +1,5 @@
-// Stream Deck + dial: rotate to select an agent (most urgent first), push or tap to open it.
+// Stream Deck + dial: rotate to select a coding agent (most urgent first), push or tap to open it.
+// Bots' chats are left to the Bots dial.
 import streamDeck, {
   action,
   SingletonAction,
@@ -37,7 +38,7 @@ export class OverviewDial extends SingletonAction {
   }
 
   override onDialRotate(ev: DialRotateEvent): void {
-    const agents = this.state.agents()
+    const agents = this.state.codingAgents()
     if (agents.length === 0) return
     const current = this.state.selected()
     const index = current ? agents.findIndex((agent) => agent.paneKey === current.paneKey) : -1

@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs'
 import type { OrcaWorkerApi } from 'orca/worker'
 import type { Disposable } from 'orca/host'
 import { AgentRoster } from './agent-roster'
+import { isBotHome } from './bot-home'
 import {
   BRIDGE_PROTOCOL,
   type ClientMessage,
@@ -45,7 +46,8 @@ export default async function activate(orca: OrcaWorkerApi): Promise<void> {
         project: row.project ?? null,
         path: row.path,
         branch: row.branch,
-        kind: row.kind
+        kind: row.kind,
+        bot: row.kind === 'folder' && isBotHome(row.path)
       }))
     } catch (error) {
       orca.log(`workspace.list failed: ${describe(error)}`)

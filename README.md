@@ -30,8 +30,8 @@ One key per workspace, coloured by what its agent is doing. Tap a key to go to t
 
 </div>
 
-Stream Deck Bridge is a plugin for [Orca](https://github.com/stablyai/orca). It shows every
-agent's state on your Stream Deck and lets you act on it from there.
+Stream Deck Bridge is a plugin for [Orca](https://github.com/stablyai/orca). It shows the state
+of every agent and bot on your Stream Deck and lets you act on it from there.
 
 > [!IMPORTANT]
 > It comes in two halves that you install together: this plugin in Orca, and the **Orca Deck**
@@ -42,8 +42,10 @@ agent's state on your Stream Deck and lets you act on it from there.
 | Action | Where | What it does |
 | --- | --- | --- |
 | **Agent** | key | One workspace per key: the project's name, the agent's logo and its state. Tap to go to it, hold to start a new agent there. |
-| **Needs you** | key | How many agents are waiting for you. Tap to go to the most urgent one. |
-| **Agents dial** | dial and touch strip (Stream Deck +) | Turn to browse every agent; the strip shows its project, state and branch. Push to go to it. |
+| **Needs you** | key | How many agents and bots are waiting for you. Tap to go to the most urgent one. |
+| **Agents dial** | dial and touch strip (Stream Deck +) | Turn to browse every coding agent; the strip shows its project, state and branch. Push to go to it. |
+| **Bot** | key | One bot per key: its picture, its name and what it is doing. Tap to open it in Orca. |
+| **Bots dial** | dial and touch strip (Stream Deck +) | Turn to browse your bots; the strip shows each one's picture and state. Push to open it. |
 
 Orca's status bar also shows how many agents need you.
 
@@ -122,11 +124,28 @@ as needs you.
 A count of the agents that need you or are waiting, red or amber accordingly. When none do, it
 shows how many are working, or that all are done. Tap goes to the most urgent agent.
 
+A bot's chats count like any other agent. The key's settings can leave them out (**Agents only**)
+or count nothing else (**Bots only**); add the key twice to watch the two apart.
+
 ### Agents dial (Stream Deck +)
 
-Turn the dial to move through every agent in every workspace, most urgent first. The touch
+Turn the dial to move through every coding agent in every workspace, most urgent first (bots
+are on the Bots dial). The touch
 strip shows the selected agent's logo, project and state, and its branch or worktree name, which
 the keys leave out. Turning only selects: push the dial or tap the strip to go to the agent.
+
+### Bot key
+
+Choose a bot in the key's settings. The key shows the bot's picture (its initial when it has
+none the plugin can read), its name, and the state of the chat that most needs you. A bot with
+nothing to report says **idle**. Tap opens the bot in Orca, on the chat it last showed.
+
+### Bots dial (Stream Deck +)
+
+Turn the dial to move through your bots, by name. The touch strip shows the bot's picture, name
+and state, and where it stands among them ("bot 2 of 3"). Left alone it shows
+the bot that most needs you; once you turn it, it stays on your pick until another bot asks for
+you. Push the dial or tap the strip to open the bot shown.
 
 ## Permissions
 
@@ -141,9 +160,10 @@ Orca asks you to approve these when you install the plugin:
 | Start agents | Starting an agent when you hold a key. |
 
 The Orca plugin stores nothing in Orca, opens no connection to the internet, and the only file it
-writes is the pairing file described under [How it works](#how-it-works). The Stream Deck plugin
-talks only to the bridge; its settings pages load Elgato's `sdpi-components` script from
-`sdpi-components.dev`.
+writes is the pairing file described under [How it works](#how-it-works). To tell which
+workspaces are bots it checks whether a folder of Orca's Bots group holds a `bot.json`, without
+reading it. The Stream Deck plugin talks only to the bridge and reads each bot's `avatar.png` to
+draw it; its settings pages load Elgato's `sdpi-components` script from `sdpi-components.dev`.
 
 ## Known limits
 
@@ -151,6 +171,9 @@ talks only to the bridge; its settings pages load Elgato's `sdpi-components` scr
   own "new agent" dialog, where you would pick one.
 - Only on macOS does a press bring Orca's window in front of other apps. Orca does not let a
   plugin raise its window, so the Stream Deck plugin does it itself, and only knows how there.
+- Bots are the ones on this computer. Orca's plugin API says nothing about bots, so the bridge
+  knows them by their folder, and a key can open a bot but not message, pause or resume it. Nor
+  can it step through a bot's chats: Orca lets a plugin go to a terminal, and a chat has none.
 - Anything running as your user on this machine can read the pairing file and connect, which is
   the same reach the `orca` CLI already has.
 - `agent.status.changed` is marked experimental by Orca; its payload may still change.
@@ -210,7 +233,8 @@ Deck → server:
 
 Each agent carries `paneKey`, `workspaceId`, `terminalId`, `title`, `agent` (kind, once known),
 `state`, `outcome` and `since` (when the current state began). Each workspace carries `id`,
-`name`, `project` (null when Orca names none), `path`, `branch` and `kind`.
+`name`, `project` (null when Orca names none), `path`, `branch`, `kind` and `bot` (true for a
+bot's home on this computer, whose agents are the bot's chats).
 
 Workspace ids are the ones `workspace.list` gives, which `open` and `launch` accept. Orca's events
 also carry a raw id; the bridge uses their `workspaceListId` and the `workspaceId` of

@@ -131,7 +131,8 @@ export class AgentKey extends SingletonAction<AgentKeySettings> {
 
   private async sendWorkspaces(reason: string): Promise<void> {
     const inspector = streamDeck.ui.current
-    const items = this.state.bridge.workspaces.map((w) => ({ label: workspaceLabel(w), value: w.id }))
+    // Bots have a key of their own; here they would only offer to start a coding agent in a bot's home.
+    const items = this.state.bridge.workspaces.filter((w) => !w.bot).map((w) => ({ label: workspaceLabel(w), value: w.id }))
     streamDeck.logger.info(`workspaces for the inspector (${reason}): ${items.length} item(s), inspector ${inspector ? 'present' : 'absent'}`)
     if (!inspector) return
     await inspector.sendToPropertyInspector({ event: 'getWorkspaces', items })

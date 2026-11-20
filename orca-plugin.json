@@ -2,8 +2,8 @@
   "manifestVersion": 2,
   "id": "streamdeck-bridge",
   "name": "Stream Deck Bridge",
-  "version": "1.0.2",
-  "description": "Shows your agents on an Elgato Stream Deck: their status on keys, and taps that open a workspace, go to an agent or start one.",
+  "version": "1.1.0",
+  "description": "Shows your agents and bots on an Elgato Stream Deck: their status on keys, and taps that open a workspace or a bot, go to an agent or start one.",
   "icon": "images/icon.png",
   "cover": {
     "path": "images/cover.jpg",

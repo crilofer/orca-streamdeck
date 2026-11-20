@@ -1,0 +1,14 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <script src="https://sdpi-components.dev/releases/v4/sdpi-components.js"></script>
+    <style>.hint { color: #999; font-size: 11px; margin: 4px 0 10px; line-height: 1.4; }</style>
+  </head>
+  <body>
+    <sdpi-item label="Bot">
+      <sdpi-select setting="botWorkspaceId" datasource="getBots" hot-reload placeholder="Choose a bot…" show-refresh loading="Asking Orca…"></sdpi-select>
+    </sdpi-item>
+    <p class="hint">The key shows this bot’s picture and what its most pressing chat is doing. Tap opens the bot in Orca, on the chat it last showed. Only bots on this computer are listed.</p>
+  </body>
+</html>
