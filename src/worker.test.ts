@@ -76,13 +76,14 @@ test('greets a deck with the roster, pushes status changes and runs its actions 
   assert.equal(hello.type, 'hello')
   if (hello.type === 'hello') {
     assert.equal(hello.protocol, 5)
-    assert.deepEqual(hello.plugin, { id: 'streamdeck-bridge', version: '1.0.1' })
+    assert.deepEqual(hello.plugin, { id: 'streamdeck-bridge', version: '1.0.2' })
   }
   // No workspace is focused, yet Orca listed the agents of each one, keyed by terminal until an event names the pane.
-  assert.deepEqual(worker.host.callsOf('agents.list'), [{ workspaceId: 'w1' }, { workspaceId: 'w2' }])
   const listedClaude = { paneKey: 'terminal:t1', workspaceId: 'w1', terminalId: 't1', title: 'Claude', agent: 'claude', state: 'blocked', outcome: null, since: 1000 }
   const listedCodex = { paneKey: 'terminal:t2', workspaceId: 'w2', terminalId: 't2', title: 'Codex', agent: 'codex', state: 'working', outcome: null, since: 800 }
   assert.deepEqual(await deck.next(), { type: 'snapshot', agents: [listedClaude, listedCodex], workspaces, focusedWorkspaceId: null })
+  // Once when the worker started, once more for the deck that connected.
+  assert.deepEqual(worker.host.callsOf('agents.list'), [{ workspaceId: 'w1' }, { workspaceId: 'w2' }, { workspaceId: 'w1' }, { workspaceId: 'w2' }])
 
   // Events carry Orca's raw id too; the deck must see the one `workspace.list` gives.
   await worker.emit('agent.status.changed', { workspaceId: 'abc::/repo', workspaceListId: 'w1', paneKey: 'p1', terminalId: 't1', title: 'Claude', state: 'waiting', receivedAt: 2000 })
@@ -120,6 +121,37 @@ test('greets a deck with the roster, pushes status changes and runs its actions 
   await worker.deactivate()
   assert.deepEqual(worker.refusals, [])
   assert.equal(readRendezvous(), null)
+})
+
+test('a deck sees the agents Orca had not listed yet when the worker started, a terminal or not', async () => {
+  // Right after Orca starts it lists no agents, then lists them before it knows their terminals.
+  let orcaIsReady = false
+  const restored = { terminalId: null, title: null, agent: 'claude', state: 'waiting', stateStartedAt: 1000, sessionId: 's1' }
+  const worker = await mountWorker(main, {
+    host: mockHost({
+      results: {
+        'workspace.list': { workspaces: workspaces.map((w) => ({ ...w, hostId: null })), truncated: false },
+        'workspace.readContext': null,
+        'agents.list': (params?: { workspaceId?: string }) => ({ agents: orcaIsReady && params?.workspaceId === 'w1' ? [restored] : [] }),
+        'statusBar.update': { ok: true }
+      }
+    })
+  })
+  orcaIsReady = true
+
+  const { port, token } = readRendezvous()!
+  const deck = await connectClient(port)
+  deck.send({ type: 'auth', token })
+  assert.equal((await deck.next()).type, 'hello')
+  assert.deepEqual(await deck.next(), {
+    type: 'snapshot',
+    agents: [{ paneKey: 'session:s1', workspaceId: 'w1', terminalId: null, title: null, agent: 'claude', state: 'waiting', outcome: null, since: 1000 }],
+    workspaces,
+    focusedWorkspaceId: null
+  })
+
+  deck.close()
+  await worker.deactivate()
 })
 
 test('tells nothing to, and runs nothing for, a client without the token', async () => {

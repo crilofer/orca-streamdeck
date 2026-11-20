@@ -1,7 +1,7 @@
 {
   "$schema": "https://schemas.elgato.com/streamdeck/plugins/manifest.json",
   "Name": "Orca Deck",
-  "Version": "1.0.1.0",
+  "Version": "1.0.2.0",
   "Author": "crilofer",
   "Description": "See which Orca coding agent needs you, jump to it, or start a new one from your Stream Deck. Needs the Stream Deck Bridge plugin in Orca.",
   "Category": "Orca Deck",

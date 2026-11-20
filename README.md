@@ -163,8 +163,9 @@ Orca agents ──events──▶ Stream Deck Bridge (this plugin) ◀───T
                            workspace.open, agent.launch, terminal.focus           keys & dials
 ```
 
-The Orca plugin asks Orca for the agents of every workspace when it starts (`agents.list`) and
-keeps that roster current from Orca's events (`agent.status.changed`). It orders it attention
+The Orca plugin asks Orca for the agents of every workspace when it starts and again each time
+a deck connects (`agents.list`), and keeps that roster current from Orca's events
+(`agent.status.changed`). It orders it attention
 first, pushes each change to connected decks, and runs what a deck asks for: open a workspace, go
 to an agent's terminal, launch an agent. The command **Stream Deck: bridge status**
 (also behind the status bar item) tells you the port and how many decks are connected.
@@ -195,7 +196,7 @@ Server → deck:
 | `hello` | Once the client has authenticated: protocol version and plugin id/version. |
 | `snapshot` | After `hello`, on request, and whenever the focused workspace changes: every agent, every workspace Orca knows, and `focusedWorkspaceId`, the one Orca's window shows (null when unknown). |
 | `agent` | An agent's status changed. |
-| `agent.removed` | Its workspace was removed, or the `agent` message just before it gave the agent its pane's key in place of a `terminal:<id>` one. |
+| `agent.removed` | Its workspace was removed, or the `agent` message just before it gave the agent its pane's key in place of a `terminal:<id>` or `session:<id>` one. |
 | `result` | Answer to a request that carried an `id`. |
 
 Deck → server:

@@ -63,16 +63,33 @@ export default async function activate(orca: OrcaWorkerApi): Promise<void> {
     }
   }
 
-  /** Every workspace's agents, from Orca, at start; its events keep them current after. */
-  const syncAllWorkspaces = async () => {
+  /**
+   * Every workspace's agents, from Orca; its events keep them current after. Run when the worker
+   * starts and again when a deck connects: right after Orca starts it lists less than it will.
+   */
+  const syncEverything = async () => {
+    await refreshWorkspaces()
+    let listed = 0
+    let withoutTerminal = 0
+    let unknowable = 0
     for (const workspace of workspaces) {
       try {
         const { agents } = await orca.host.call('agents.list', { workspaceId: workspace.id })
-        roster.syncWorkspace(agents, workspace.id)
+        listed += agents.length
+        withoutTerminal += agents.filter((agent) => agent.terminalId === null).length
+        unknowable += roster.syncWorkspace(agents, workspace.id)
       } catch (error) {
         orca.log(`agents.list(${workspace.name}) failed: ${describe(error)}`)
       }
     }
+    try {
+      await syncFocusedAgents(await orca.host.call('workspace.readContext'))
+    } catch (error) {
+      orca.log(`workspace.readContext failed: ${describe(error)}`)
+    }
+    orca.log(
+      `Orca listed ${listed} agent(s) in ${workspaces.length} workspace(s): ${withoutTerminal} without a terminal, ${unknowable} of them without a session either (not shown)`
+    )
   }
 
   const updateStatusBar = async () => {
@@ -162,8 +179,10 @@ export default async function activate(orca: OrcaWorkerApi): Promise<void> {
       log: (message) => orca.log(message),
       onConnect: (client) => {
         client.send({ type: 'hello', protocol: BRIDGE_PROTOCOL, plugin })
-        client.send(snapshot())
-        void updateStatusBar()
+        void syncEverything().then(() => {
+          server?.broadcast(snapshot())
+          void updateStatusBar()
+        })
       },
       onMessage: handleClientMessage
     })
@@ -176,13 +195,7 @@ export default async function activate(orca: OrcaWorkerApi): Promise<void> {
     }
   }
 
-  await refreshWorkspaces()
-  await syncAllWorkspaces()
-  try {
-    await syncFocusedAgents(await orca.host.call('workspace.readContext'))
-  } catch (error) {
-    orca.log(`workspace.readContext failed: ${describe(error)}`)
-  }
+  await syncEverything()
   // Listen last, so a failed activation never leaves a port open behind a worker Orca will restart.
   await startServer()
   try {

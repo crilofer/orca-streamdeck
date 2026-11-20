@@ -92,3 +92,39 @@ test('a launched agent survives listings that do not name it yet, until it repor
   roster.syncFocused([], ['t-silent'], 'W', 40_000)
   assert.deepEqual(roster.list(), [])
 })
+
+test('an agent Orca lists without a terminal is kept by its session, and stays one agent once Orca names its terminal and pane', () => {
+  const roster = new AgentRoster()
+  const rows = () => roster.list().map((agent) => [agent.paneKey, agent.terminalId, agent.agent, agent.state])
+  // What Orca answers right after it starts: it has the agent's status, not yet its terminal.
+  roster.syncWorkspace([{ terminalId: null, title: null, agent: 'claude', state: 'waiting', stateStartedAt: 5, sessionId: 's1' }], 'W')
+  assert.deepEqual(rows(), [['session:s1', null, 'claude', 'waiting']])
+
+  roster.syncFocused([{ terminalId: 't1', title: 'Claude', agent: 'claude', state: 'waiting', stateStartedAt: 5, sessionId: 's1' }], ['t1'], 'W')
+  assert.deepEqual(rows(), [['session:s1', 't1', 'claude', 'waiting']])
+
+  const named = roster.apply({ workspaceId: 'W', paneKey: 'p1', terminalId: 't1', state: 'working', receivedAt: 9 })
+  assert.equal(named.replaced, 'session:s1')
+  assert.deepEqual(rows(), [['p1', 't1', 'claude', 'working']])
+})
+
+test('an event that carries only the session takes over the agent listed without a terminal', () => {
+  const roster = new AgentRoster()
+  roster.syncWorkspace([{ terminalId: null, title: null, agent: 'codex', state: 'done', stateStartedAt: 5, sessionId: 's1' }], 'W')
+
+  assert.equal(roster.apply({ workspaceId: 'W', paneKey: 'chat-1', sessionId: 's1', state: 'working', receivedAt: 9 }).replaced, 'session:s1')
+  assert.deepEqual(roster.list().map((agent) => [agent.paneKey, agent.agent]), [['chat-1', 'codex']])
+  // Still listed without a terminal: the same agent, not a second one.
+  roster.syncWorkspace([{ terminalId: null, title: null, agent: 'codex', state: 'working', stateStartedAt: 9, sessionId: 's1' }], 'W')
+  assert.deepEqual(roster.list().map((agent) => agent.paneKey), ['chat-1'])
+})
+
+test('forgets an agent without a terminal once Orca no longer lists its session in that workspace', () => {
+  const roster = new AgentRoster()
+  const listed = (sessionId: string) => ({ terminalId: null, title: null, agent: 'claude', state: 'done' as const, stateStartedAt: 5, sessionId })
+  roster.syncWorkspace([listed('s1'), listed('s2')], 'W')
+  roster.syncWorkspace([listed('s3')], 'OTHER')
+
+  roster.syncWorkspace([listed('s2')], 'W')
+  assert.deepEqual(roster.list().map((agent) => agent.paneKey).sort(), ['session:s2', 'session:s3'])
+})
